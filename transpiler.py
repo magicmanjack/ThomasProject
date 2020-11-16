@@ -8,11 +8,14 @@ c_datatypes = {"int ","float ","double ","bool ","short ","long ","char "}
 analagous_func = {
     "printf(" : "print("
 }
+with open(python_file_str,"a+") as f_initial:#Initialization, clear all existing text before transpilling 
+  f_initial.seek(0)
+  f_initial.truncate()
 
 with open(c_file_str, "r") as f:
     lines = f.readlines()
     for l in lines:
-        if "main(" in l:
+        if "main(" in l:#Count for indentation
             indent -= 1
         if "{" in l:
             indent += 1
@@ -38,14 +41,16 @@ with open(c_file_str, "r") as f:
                 l_out = l.replace(func, analagous_func[func]).replace(";", "").strip() + "\n"
                 first_slice = l_out[:l_out.find("\"", l_out.find("\"") + 1) + 1]
                 second_slice = l_out[l_out.find("\"", l_out.find("\"") + 1) + 1:]
+                
                 if "," in second_slice:
                   second_slice = second_slice.replace(",", "%", 1).strip()
-                  second_slice = "{}({}){}".format(second_slice[0], second_slice[1:second_slice.find(")")], second_slice[second_slice.find(")"):])       
+                  second_slice = "{}({}),end=''{}".format(second_slice[0], second_slice[1:second_slice.find(")")], second_slice[second_slice.find(")"):])       
                   l_out = first_slice + second_slice
-
+                else:
+                  second_slice = ",end=''{}".format(second_slice[second_slice.find(")"):])
+                  l_out = first_slice + second_slice
                     
                 with open(python_file_str,"a+") as f1:
                         f1.write(l_out)
 
-        
-
+      
